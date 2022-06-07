@@ -1,5 +1,6 @@
 local blacklist = {
     kickplayerbythis = function(grl,this,reason)
+        if grl == nil then return end
         for i=1,#grl do
             if grl[i] == this then
                 player.kick(ply)
@@ -215,7 +216,7 @@ local blacklist = {
         
         }
     },
-    blackplayer = {
+    whiteplayer = {
         210152382,
         129879190,
         156630607,
@@ -224,14 +225,14 @@ local blacklist = {
 
 
 function OnChatMsg(ply, text)
-    for x = 1,#blacklist.blackplayer do
-        if blacklist.blackplayer[x] == player.get_rid(ply) then
+    for x = 1,#blacklist.whiteplayer do
+        if blacklist.whiteplayer[x] == player.get_rid(ply) then
             utils.notify("踢出玩家 "..player.get_name(ply),"白名单",10,4)
         else
             for i = 1,#blacklist.blackwords do
                 if string.find(text, blacklist.blackwords[i]) ~= nil then
-                    for y = 1,#blacklist.whitelists do
-                        if string.find(text, blacklist.whitelists[y]) == nil then
+                    for y = 1,#blacklist.whitewords do
+                        if string.find(text, blacklist.whitewords[y]) == nil then
                             if not player.is_local(ply) then
                                 player.kick(ply)
                                 player.kick_idm(ply)
