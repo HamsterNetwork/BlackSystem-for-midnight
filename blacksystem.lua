@@ -1,5 +1,5 @@
 local blacklist = {
-    kickplayerbythis = function(grl,this,reason)
+    kickplayerbythis = function(grl,this,reason,ply)
         if grl == nil then return end
         for i=1,#grl do
             if grl[i] == this then
@@ -254,16 +254,16 @@ function OnChatMsg(ply, text)
 end
 
 function OnPlayerJoin(ply)
-    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机")
-    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字")
+    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机",ply)
+    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
 end
 function OnScriptEvent(ply, event, args)
-    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机")
-    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字")
+    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机",ply)
+    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
 end
 function OnNetworkEvent(ply, event, buf)
-    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机")
-    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字")
+    blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],player.get_rid(ply),"广告机",ply)
+    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
 end
 function OnInit()
     utils.notify("黑名单","加载完毕",19,1)
