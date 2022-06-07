@@ -11,14 +11,14 @@ local blacklist = {
             end
         end
     end,
-    outputlog = function(ply)
+    outputlog = function(ply,word,text)
         if fs.file_load_txt("./blacklog.txt") == "" then
             if string.find(fs.file_load_txt("./blacklog.txt"),"Rid: "..player.get_rid(ply)) == nil then
-                fs.file_write("./blacklog.txt", "Rid: "..player.get_rid(ply).."\n原因: 发出违禁词("..blacklist.blackwords[i]..")\n内容:\n"..text)
+                fs.file_write("./blacklog.txt", "Rid: "..player.get_rid(ply).."\n原因: 发出违禁词("..word..")\n内容:\n"..text)
             end
         else
             if string.find(fs.file_load_txt("./blacklog.txt"),"Rid: "..player.get_rid(ply)) == nil then
-                fs.file_append("./blacklog.txt", "\n----------------------------------------------\nRid: "..player.get_rid(ply).."\n原因: 发出违禁词("..blacklist.blackwords[i]..")\n内容:\n"..text)
+                fs.file_append("./blacklog.txt", "\n----------------------------------------------\nRid: "..player.get_rid(ply).."\n原因: 发出违禁词("..word..")\n内容:\n"..text)
             end
         end
     end,
@@ -239,7 +239,7 @@ function OnChatMsg(ply, text)
                                 player.kick_brute(ply)
                                 utils.notify("踢出玩家 "..player.get_name(ply),"踢出原因: 发出违禁词("..blacklist.blackwords[i]..")",10,4)
                                 utils.send_chat("踢出玩家: "..player.get_name(ply).."  踢出原因: 发出违禁词("..blacklist.blackwords[i]..")", false)
-                                blacklist.outputlog(ply)
+                                blacklist.outputlog(ply,blacklist.blackwords[i],text)
                                 return
                             end
                         else
