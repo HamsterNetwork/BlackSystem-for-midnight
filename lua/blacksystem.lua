@@ -39,25 +39,30 @@ local blacklist = {
     whitewords = {},
     blackplayername = {},
     blackplayer = {},
-    whiteplayer = {}
+    whiteplayer = {},
     file_name = {
         blackwords = "blackwords.cfg",
         whitewords = "whitewords.cfg",
         blackplayername = "blackplayername.cfg",
-        blackplayer = ""
+        blackplayer = {
+            ["广告机"] = "blackplayer_ads.cfg",
+            ["custom"] = "blackplayer_custom.cfg"
+        },
+        whiteplayer = "whiteplayer.cfg"
     }
 }
 
 function refresh_cfg()
-    blacklist.blackwords = split(fs.file_load_txt("blackwords.cfg"),"\r")
-    blacklist.whitewords = split(fs.file_load_txt("whitewords.cfg"),"\r")
-    blacklist.blackplayername = split(fs.file_load_txt("blackplayername.cfg"),"\r")
-    blacklist.blackplayer["广告机"] = split(fs.file_load_txt("blackplayer_ads.cfg"),"\r")
-    
-    blacklist.whiteplayer = split(fs.file_load_txt("whiteplayer.cfg"),"\r")
+    blacklist.blackwords = split(fs.file_load_txt(blacklist.file_name.blackwords),"\r")
+    blacklist.whitewords = split(fs.file_load_txt(blacklist.file_name.whitewords),"\r")
+    blacklist.blackplayername = split(fs.file_load_txt(blacklist.file_name.blackplayername),"\r")
+    blacklist.blackplayer["广告机"] = split(fs.file_load_txt(blacklist.file_name.blackplayer["广告机"]),"\r")
+    blacklist.blackplayer["custom"] = split(fs.file_load_txt(blacklist.file_name.blackplayer["custom"]),"\r")
+    blacklist.whiteplayer = split(fs.file_load_txt(blacklist.file_name.whiteplayer),"\r")
 end
 function kick_player(ply)
     refresh_cfg()
+    blacklist.kickplayerbythis(blacklist.blackplayer["custom"],tostring(player.get_rid(ply)),"黑名单",ply)
     blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],tostring(player.get_rid(ply)),"广告机",ply)
     blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
     return
@@ -119,5 +124,4 @@ function OnDone()
     if enable_log then
         blacklist.outputlog("卸载脚本完毕")
     end
-
 end
