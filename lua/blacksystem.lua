@@ -3,11 +3,7 @@ local json = require("lib/json")
 local files = require("lib/files")
 local path = fs.get_dir_product() .. "blacksystem\\"
 local config = json.decode(files.load_file(fs.get_dir_product().."config/config.json"))["blacksystem"]
-local language_list = {
-    "Chinese",
-    "English"
-}
-local language = json.decode(files.load_file(fs.get_dir_product().."language/"..language_list[1]..".json"))["blacksystem"]
+local language = json.decode(files.load_file(fs.get_dir_product().."language/"..config["language"]..".json"))["blacksystem"]
 function split(str,reps)
     local resultStrList = {}
     string.gsub(str,'[^'..reps..']+',function (w)
