@@ -1,0 +1,17 @@
+{
+    "blacksystem": {
+        "enable": true,
+        "output_log": false,
+        "crash": true,
+        "file_name": {
+            "blackwords": "blackwords.cfg",
+            "whitewords": "whitewords.cfg",
+            "blackplayername": "blackplayername.cfg",
+            "blackplayer": {
+                "广告机": "blackplayer_ads.cfg",
+                "custom": "blackplayer_custom.cfg"
+            },
+            "whiteplayer": "whiteplayer.cfg"
+        }
+    }
+}
