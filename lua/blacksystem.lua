@@ -2,8 +2,12 @@ local log_file_name = "blacklist_"..os.date("%d_%m_%Y_%H_%M_%S")..".log"
 local json = require("lib/json")
 local files = require("lib/files")
 local path = fs.get_dir_product() .. "blacksystem\\"
-print(fs.get_dir_product().."config/config.json")
 local config = json.decode(files.load_file(fs.get_dir_product().."config/config.json"))["blacksystem"]
+local language_list = {
+    "Chinese",
+    "English"
+}
+local language = json.decode(files.load_file(fs.get_dir_product().."language/"..language_list[1]..".json"))["blacksystem"]
 function split(str,reps)
     local resultStrList = {}
     string.gsub(str,'[^'..reps..']+',function (w)
@@ -25,8 +29,8 @@ local blacklist = {
                     player.crash_himiko_start(ply)
                     player.crash_izuku_start(ply)
                 end
-                utils.notify("踢出玩家 "..player.get_name(ply),"踢出原因: "..reason,10,4)
-                utils.send_chat("踢出玩家: "..player.get_name(ply).."  踢出原因: "..reason, false)
+                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kickreason"],reason),10,4)
+                utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kickreason"],reason), false)
             end
         end
     end,
@@ -62,9 +66,9 @@ end
 refresh_cfg()
 function kick_player(ply)
     refresh_cfg()
-    blacklist.kickplayerbythis(blacklist.blackplayer["custom"],tostring(player.get_rid(ply)),"黑名单",ply)
+    blacklist.kickplayerbythis(blacklist.blackplayer["custom"],tostring(player.get_rid(ply)),language["blacklist"],ply)
     blacklist.kickplayerbythis(blacklist.blackplayer["广告机"],tostring(player.get_rid(ply)),"广告机",ply)
-    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
+    blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),language["blackname"],ply)
     return
 end
 print(blacklist.blackwords[1])
@@ -74,7 +78,7 @@ function OnChatMsg(ply, text)
     refresh_cfg()
     for x = 1,#blacklist.whiteplayer do
         if blacklist.whiteplayer[x] == tostring(player.get_rid(ply)) then
-            utils.notify("踢出玩家 "..player.get_name(ply),"白名单",10,4)
+            utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["whitelist"],10,4)
         else
             for i = 1,#blacklist.blackwords do 
                 files.write_file(path.."test.txt", blacklist.blackwords[i])
@@ -91,15 +95,15 @@ function OnChatMsg(ply, text)
                                     player.crash_himiko_start(ply)
                                     player.crash_izuku_start(ply)
                                 end
-                                utils.notify("踢出玩家 "..player.get_name(ply),"踢出原因: 发出违禁词("..blacklist.blackwords[i]..")",10,4)
-                                utils.send_chat("踢出玩家: "..player.get_name(ply).."  踢出原因: 发出违禁词("..blacklist.blackwords[i]..")", false)
+                                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kicksentblackword"],blacklist.blackwords[i]),10,4)
+                                utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kicksentblackword"],blacklist.blackwords[i]), false)
                                 if config["output_log"] then
                                     blacklist.outputkicklog(ply,blacklist.blackwords[i],text)
                                 end
                                 return
                             end
                         else
-                            utils.notify("踢出玩家 "..player.get_name(ply),"非恶意关键词",10,4)
+                            utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["nobaleful"],10,4)
                             return
                         end
                     end
@@ -122,13 +126,13 @@ function OnNetworkEvent(ply, event, buf)
     kick_player(ply)
 end
 function OnInit()
-    utils.notify("黑名单","加载完毕",19,1)
+    utils.notify(language["title"],language["loaded"],19,1)
     if config["output_log"] then
         blacklist.outputlog("加载脚本完毕")
     end
 end
 function OnDone()
-    utils.notify("黑名单","卸载完毕",19,1)
+    utils.notify(language["title"],language["unloaded"],19,1)
     if config["output_log"] then
         blacklist.outputlog("卸载脚本完毕")
     end
@@ -141,7 +145,8 @@ local titles = {
 "AddBlack",
 "AddWhite",
 "Kick",
-"Crash"
+"Crash",
+"Bounty"
 }
 local function draw_rect(x,y,x1,y1,r, g, b,size)
     draw.set_color(0,r, g, b)
@@ -152,23 +157,23 @@ end
 function execute_black()
     local players = player.get_hosts_queue()
     if player.is_local(players[key_index]) then
-        utils.notify("黑名单","不可添加本地玩家",16,2)
+        utils.notify(language["title"],language["cantaddlocal"],16,2)
         return
     end
     if title_index == 2 then
         if files.load_file(path..config["file_name"]["blackplayer"]["custom"]) == "" then
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify("黑名单","黑名单添加成功",16,1)
+                utils.notify(language["title"],language["blackadded"],16,1)
             else
-                utils.notify("黑名单","黑名单已存在",16,2)
+                utils.notify(language["title"],language["blackexists"],16,2)
             end
         else
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.append_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify("黑名单","黑名单添加成功",16,1)
+                utils.notify(language["title"],language["blackadded"],16,1)
             else
-                utils.notify("黑名单","黑名单已存在",16,2)
+                utils.notify(language["title"],language["blackexists"],16,2)
             end
         end
     end
@@ -177,16 +182,16 @@ function execute_black()
             
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify("黑名单","白名单添加成功",16,1)
+                utils.notify(language["title"],language["whiteadded"],16,1)
             else
-                utils.notify("黑名单","白名单已存在",16,2)
+                utils.notify(language["title"],language["whiteexists"],16,2)
             end
         else
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(tostring(player.get_rid(players[key_index])))) == nil then
                 files.append_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify("黑名单","白名单添加成功",16,1)
+                utils.notify(language["title"],language["whiteadded"],16,1)
             else
-                utils.notify("黑名单","白名单已存在",16,2)
+                utils.notify(language["title"],language["whiteexists"],16,2)
             end
         end
     end
@@ -198,6 +203,10 @@ function execute_black()
     if title_index == 5 then
         player.crash_himiko_start(players[key_index])
         player.crash_izuku_start(players[key_index])
+    end
+    if title_index == 6 then
+        player.set_bounty(players[key_index], 9000, true)
+
     end
 end
 function OnFrame()
