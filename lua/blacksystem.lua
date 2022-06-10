@@ -52,13 +52,14 @@ local blacklist = {
 }
 
 function refresh_cfg()
-    blacklist.blackwords = split(files.load_file(path..config["file_name"]["blackwords"]),"\r")
-    blacklist.whitewords = split(files.load_file(path..config["file_name"]["whitewords"]),"\r")
-    blacklist.blackplayername = split(files.load_file(path..config["file_name"]["blackplayername"]),"\r")
-    blacklist.blackplayer["广告机"] = split(files.load_file(path..config["file_name"]["blackplayer"]["广告机"]),"\r")
-    blacklist.blackplayer["custom"] = split(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),"\r")
-    blacklist.whiteplayer = split(files.load_file(path..config["file_name"]["whiteplayer"]),"\r")
+    blacklist.blackwords = split(files.load_file(path..config["file_name"]["blackwords"]),"\n")
+    blacklist.whitewords = split(files.load_file(path..config["file_name"]["whitewords"]),"\n")
+    blacklist.blackplayername = split(files.load_file(path..config["file_name"]["blackplayername"]),"\n")
+    blacklist.blackplayer["广告机"] = split(files.load_file(path..config["file_name"]["blackplayer"]["广告机"]),"\n")
+    blacklist.blackplayer["custom"] = split(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),"\n")
+    blacklist.whiteplayer = split(files.load_file(path..config["file_name"]["whiteplayer"]),"\n")
 end
+refresh_cfg()
 function kick_player(ply)
     refresh_cfg()
     blacklist.kickplayerbythis(blacklist.blackplayer["custom"],tostring(player.get_rid(ply)),"黑名单",ply)
@@ -66,7 +67,7 @@ function kick_player(ply)
     blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),"黑名单名字",ply)
     return
 end
-
+print(blacklist.blackwords[1])
 
 function OnChatMsg(ply, text)
     if not config["enable"] then return end
@@ -157,14 +158,14 @@ function execute_black()
     if title_index == 2 then
         if files.load_file(path..config["file_name"]["blackplayer"]["custom"]) == "" then
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
-                files.write_file(path..config["file_name"]["blackplayer"]["custom"], "\r"..tostring(player.get_rid(players[key_index])))
+                files.write_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","黑名单添加成功",16,1)
             else
                 utils.notify("黑名单","黑名单已存在",16,2)
             end
         else
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
-                files.append_file(path..config["file_name"]["blackplayer"]["custom"], "\r"..tostring(player.get_rid(players[key_index])))
+                files.append_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","黑名单添加成功",16,1)
             else
                 utils.notify("黑名单","黑名单已存在",16,2)
@@ -175,14 +176,14 @@ function execute_black()
         if files.load_file(path..config["file_name"]["whiteplayer"]) == "" then
             
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(player.get_rid(players[key_index]))) == nil then
-                files.write_file(path..config["file_name"]["whiteplayer"], "\r"..tostring(player.get_rid(players[key_index])))
+                files.write_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","白名单添加成功",16,1)
             else
                 utils.notify("黑名单","白名单已存在",16,2)
             end
         else
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(tostring(player.get_rid(players[key_index])))) == nil then
-                files.append_file(path..config["file_name"]["whiteplayer"], "\r"..tostring(player.get_rid(players[key_index])))
+                files.append_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","白名单添加成功",16,1)
             else
                 utils.notify("黑名单","白名单已存在",16,2)
