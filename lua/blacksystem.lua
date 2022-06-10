@@ -2,7 +2,8 @@ local log_file_name = "blacklist_"..os.date("%d_%m_%Y_%H_%M_%S")..".log"
 local json = require("lib/json")
 local files = require("lib/files")
 local path = fs.get_dir_product() .. "blacksystem\\"
-local config = json.decode(files.load_files(fs.get_dir_product().."config\\config.json"))["blacksystem"]
+print(fs.get_dir_product().."config/config.json")
+local config = json.decode(files.load_file(fs.get_dir_product().."config/config.json"))["blacksystem"]
 function split(str,reps)
     local resultStrList = {}
     string.gsub(str,'[^'..reps..']+',function (w)
@@ -30,12 +31,12 @@ local blacklist = {
         end
     end,
     outputkicklog = function(ply,word,text)
-        if files.load_files(path..log_file_name) == "" then
-            if string.find(files.load_files(path..log_file_name),"Rid: "..player.get_rid(ply)) == nil then
+        if files.load_file(path..log_file_name) == "" then
+            if string.find(files.load_file(path..log_file_name),"Rid: "..player.get_rid(ply)) == nil then
                 files.write_file(path..log_file_name, "["..os.date("%d.%m.%Y %H:%M:%S").."] Rid: "..player.get_rid(ply).."\n["..os.date("%d.%m.%Y %H:%M:%S").."]原因: 发出违禁词("..word..")\n["..os.date("%d.%m.%Y %H:%M:%S").."]内容: "..text)
             end
         else
-            if string.find(files.load_files(path..log_file_name),"Rid: "..player.get_rid(ply)) == nil then
+            if string.find(files.load_file(path..log_file_name),"Rid: "..player.get_rid(ply)) == nil then
                 files.append_file(path..log_file_name, "\n----------------------------------------------\n["..os.date("%d.%m.%Y %H:%M:%S").."]Rid: "..player.get_rid(ply).."\n["..os.date("%d.%m.%Y %H:%M:%S").."]原因: 发出违禁词("..word..")\n["..os.date("%d.%m.%Y %H:%M:%S").."]内容: "..text)
             end
         end
@@ -47,16 +48,16 @@ local blacklist = {
     whitewords = {},
     blackplayername = {},
     blackplayer = {},
-    whiteplayer = {}
+    whiteplayer = {},
 }
 
 function refresh_cfg()
-    blacklist.blackwords = split(files.load_files(path..config["file_name"]["blackwords"]),"\r")
-    blacklist.whitewords = split(files.load_files(path..config["file_name"]["whitewords"]),"\r")
-    blacklist.blackplayername = split(files.load_files(path..config["file_name"]["blackplayername"]),"\r")
-    blacklist.blackplayer["广告机"] = split(files.load_files(path..config["file_name"]["blackplayer"]["广告机"]),"\r")
-    blacklist.blackplayer["custom"] = split(files.load_files(path..config["file_name"]["blackplayer"]["custom"]),"\r")
-    blacklist.whiteplayer = split(files.load_files(path..config["file_name"]["whiteplayer"]),"\r")
+    blacklist.blackwords = split(files.load_file(path..config["file_name"]["blackwords"]),"\r")
+    blacklist.whitewords = split(files.load_file(path..config["file_name"]["whitewords"]),"\r")
+    blacklist.blackplayername = split(files.load_file(path..config["file_name"]["blackplayername"]),"\r")
+    blacklist.blackplayer["广告机"] = split(files.load_file(path..config["file_name"]["blackplayer"]["广告机"]),"\r")
+    blacklist.blackplayer["custom"] = split(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),"\r")
+    blacklist.whiteplayer = split(files.load_file(path..config["file_name"]["whiteplayer"]),"\r")
 end
 function kick_player(ply)
     refresh_cfg()
@@ -154,15 +155,15 @@ function execute_black()
         return
     end
     if title_index == 2 then
-        if files.load_files(path..config["file_name"]["blackplayer"]["custom"]) == "" then
-            if string.find(files.load_files(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
+        if files.load_file(path..config["file_name"]["blackplayer"]["custom"]) == "" then
+            if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["blackplayer"]["custom"], "\r"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","黑名单添加成功",16,1)
             else
                 utils.notify("黑名单","黑名单已存在",16,2)
             end
         else
-            if string.find(files.load_files(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
+            if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.append_file(path..config["file_name"]["blackplayer"]["custom"], "\r"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","黑名单添加成功",16,1)
             else
@@ -171,16 +172,16 @@ function execute_black()
         end
     end
     if title_index == 3 then
-        if files.load_files(path..config["file_name"]["whiteplayer"]) == "" then
+        if files.load_file(path..config["file_name"]["whiteplayer"]) == "" then
             
-            if string.find(files.load_files(path..config["file_name"]["whiteplayer"]),tostring(player.get_rid(players[key_index]))) == nil then
+            if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["whiteplayer"], "\r"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","白名单添加成功",16,1)
             else
                 utils.notify("黑名单","白名单已存在",16,2)
             end
         else
-            if string.find(files.load_files(path..config["file_name"]["whiteplayer"]),tostring(tostring(player.get_rid(players[key_index])))) == nil then
+            if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(tostring(player.get_rid(players[key_index])))) == nil then
                 files.append_file(path..config["file_name"]["whiteplayer"], "\r"..tostring(player.get_rid(players[key_index])))
                 utils.notify("黑名单","白名单添加成功",16,1)
             else
@@ -199,7 +200,7 @@ function execute_black()
     end
 end
 function OnFrame()
-    config = json.decode(files.load_files(fs.get_dir_product().."config\\config.json"))["blacksystem"]
+    config = json.decode(files.load_file(fs.get_dir_product().."config\\config.json"))["blacksystem"]
     if not config["enable"] then return end
     if menu.is_menu_opened() then
         local players = player.get_hosts_queue()
