@@ -2,8 +2,9 @@ local log_file_name = "blacklist_"..os.date("%d_%m_%Y_%H_%M_%S")..".log"
 local json = require("lib/json")
 local files = require("lib/files")
 local path = fs.get_dir_product() .. "blacksystem\\"
-local config = json.decode(files.load_file(fs.get_dir_product().."config/config.json"))["blacksystem"]
-local language = json.decode(files.load_file(fs.get_dir_product().."language/"..config["language"]..".json"))["blacksystem"]
+local config_path = fs.get_dir_product().."config/blacksystem/config.json"
+local config = json.decode(files.load_file(config_path))
+local language = json.decode(files.load_file(fs.get_dir_product().."language/blacksystem/"..config["language"]..".json"))
 function split(str,reps)
     local resultStrList = {}
     string.gsub(str,'[^'..reps..']+',function (w)
@@ -67,7 +68,9 @@ function kick_player(ply)
     blacklist.kickplayerbythis(blacklist.blackplayername,player.get_name(ply),language["blackname"],ply)
     return
 end
-print(blacklist.blackwords[1])
+local function ToCol(col)
+	return math.floor(col.x * 255), math.floor(col.y * 255), math.floor(col.z * 255), math.floor(col.w * 255)
+end
 
 function OnChatMsg(ply, text)
     if not config["enable"] then return end
@@ -142,10 +145,11 @@ local titles = {
 "AddWhite",
 "Kick",
 "Crash",
-"Bounty"
+"Bounty",
+"Teleport"
 }
-local function draw_rect(x,y,x1,y1,r, g, b,size)
-    draw.set_color(0,r, g, b)
+local function draw_rect(x,y,x1,y1,r, g, b,a,size)
+    draw.set_color(0,r, g, b,a)
     for i = 1, size do
         draw.rect(x+0.1*i, y+0.1*i, x1-0.1*i, y1-0.1*i)
     end
@@ -202,13 +206,22 @@ function execute_black()
     end
     if title_index == 6 then
         player.set_bounty(players[key_index], 9000, true)
-
+    end
+    if title_index == 7 then
+        local pos = Vector3(0, 0, 0)
+        if player.get_coordinates(player.get_index(players[key_index]), pos) then
+            utils.teleport(player.id(), pos.x, pos.y, pos.z)
+        end
     end
 end
 function OnFrame()
-    config = json.decode(files.load_file(fs.get_dir_product().."config\\config.json"))["blacksystem"]
+    config = json.decode(files.load_file(config_path))
     if not config["enable"] then return end
     if menu.is_menu_opened() then
+        local sub_r, sub_g, sub_b, sub_a = ToCol(menu.get_color(menu_color.ChildBg))
+        local r, g, b, a = ToCol(menu.get_color(menu_color.WindowBg))
+        local text_r, text_g, text_b, text_a = ToCol(menu.get_widget_color(menu_widget_color.Text))
+        local textactive_r, textactive_g, textactive_b, textactive_a = ToCol(menu.get_color(menu_color.Text))
         local players = player.get_hosts_queue()
         local x = 0
         local y = 0
@@ -220,6 +233,9 @@ function OnFrame()
             if long_size < draw.get_text_size_x(player.get_name(ply)) then
                 long_size = draw.get_text_size_x(player.get_name(ply))
             end
+            if long_size < draw.get_text_size_x("Online:"..#players.."/30") then
+                long_size = draw.get_text_size_x("Online:"..#players.."/30")
+            end
             
         end
         
@@ -227,22 +243,22 @@ function OnFrame()
             ply = players[i]
             if player.get_name(ply) == player.get_name(players[key_index]) then
                 target_text_size = draw.get_text_size(player.get_name(ply))
-                draw.set_color(0,34,34,38)
+                draw.set_color(0,r, g, b, a)
                 draw.rect_filled(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y)
                 draw.rect_filled(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y+target_text_size.y, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y*2)
-                draw.set_color(0, 230, 230 ,230)
+                draw.set_color(0, textactive_r, textactive_g, textactive_b, textactive_a)
                 oneline_text = "Online:"..#players.."/30"
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(oneline_text)/2, menu.get_main_menu_pos().y, oneline_text)
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(oneline_text)/2, menu.get_main_menu_pos().y, oneline_text)
                 title_text = titles[title_index].."("..title_index.."/"..#titles..")"
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(title_text)/2, menu.get_main_menu_pos().y+target_text_size.y, title_text)
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(title_text)/2, menu.get_main_menu_pos().y+target_text_size.y, title_text)
-                draw_rect(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*key_index, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*(key_index+1),119,119,119,15)
+                draw_rect(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*key_index, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*(key_index+1),sub_r, sub_g, sub_b, sub_a,15)
                 
             end
             if menu.get_main_menu_pos().y+text_size.y*x < menu.get_main_menu_pos().y+menu.get_main_menu_size().y then
 
-                draw.set_color(0, 230, 230 ,230)
+                draw.set_color(0, textactive_r, textactive_g, textactive_b, textactive_a)
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+5, menu.get_main_menu_pos().y+text_size.y+text_size.y*i, player.get_name(ply))
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+5, menu.get_main_menu_pos().y+text_size.y+text_size.y*i, player.get_name(ply)) 
             end
