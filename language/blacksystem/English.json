@@ -1,19 +1,17 @@
 {
-    "blacksystem":{
-        "title": "BlackSystem",
-        "loaded": "Loaded",
-        "unloaded": "Unloaded",
-        "kicktitle": "Kick %s",
-        "kickreason": "Reason: %s",
-        "nobaleful": "not baleful word",
-        "kicksentblackword": "Reson: sent black word(%s)",
-        "cantaddlocal": "Cant Add localplayer",
-        "blacklist": "Blacklist",
-        "blackadded": "Black Added",
-        "blackexists": "Black is exists",
-        "blackname": "Black name",
-        "whitelist": "Whitelist",
-        "whiteadded": "White Added",
-        "whiteexists": "White is exists"
-    }
+    "title": "BlackSystem",
+    "loaded": "Loaded",
+    "unloaded": "Unloaded",
+    "kicktitle": "Kick %s",
+    "kickreason": "Reason: %s",
+    "nobaleful": "not baleful word",
+    "kicksentblackword": "Reson: sent black word(%s)",
+    "cantaddlocal": "Cant Add localplayer",
+    "blacklist": "Blacklist",
+    "blackadded": "Black Added",
+    "blackexists": "Black is exists",
+    "blackname": "Black name",
+    "whitelist": "Whitelist",
+    "whiteadded": "White Added",
+    "whiteexists": "White is exists"
 }

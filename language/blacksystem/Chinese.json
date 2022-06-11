@@ -1,19 +1,17 @@
 {
-    "blacksystem":{
-        "title": "黑名单",
-        "loaded": "加载完毕",
-        "unloaded": "卸载完毕",
-        "kicktitle": "踢出玩家 %s",
-        "kickreson": "踢出原因: %s",
-        "nobaleful": "非恶意关键词",
-        "kicksentblackword": "踢出原因: 发出违禁词(%s)",
-        "cantaddlocal": "不可添加本地玩家",
-        "blacklist": "黑名单",
-        "blackadded": "黑名单添加成功",
-        "blackexists": "黑名单已存在",
-        "blackname": "黑名单名字",
-        "whitelist": "白名单",
-        "whiteadded": "白名单添加成功",
-        "whiteexists": "白名单已存在"
-    }
+    "title": "黑名单",
+    "loaded": "加载完毕",
+    "unloaded": "卸载完毕",
+    "kicktitle": "踢出玩家 %s",
+    "kickreson": "踢出原因: %s",
+    "nobaleful": "非恶意关键词",
+    "kicksentblackword": "踢出原因: 发出违禁词(%s)",
+    "cantaddlocal": "不可添加本地玩家",
+    "blacklist": "黑名单",
+    "blackadded": "黑名单添加成功",
+    "blackexists": "黑名单已存在",
+    "blackname": "黑名单名字",
+    "whitelist": "白名单",
+    "whiteadded": "白名单添加成功",
+    "whiteexists": "白名单已存在"
 }
