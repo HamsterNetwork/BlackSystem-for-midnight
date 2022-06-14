@@ -26,8 +26,12 @@ local blacklist = {
                     player.crash_himiko_start(ply)
                     player.crash_izuku_start(ply)
                 end
-                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kickreason"],reason),10,4)
-                utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kickreason"],reason), false)
+                if config["notify"] then
+                    utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kickreason"],reason),10,4)
+                end
+                if config["nofify_chat"] then
+                    utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kickreason"],reason), false)
+                end
             end
         end
     end,
@@ -77,7 +81,9 @@ function OnChatMsg(ply, text)
     refresh_cfg()
     for x = 1,#blacklist.whiteplayer do
         if blacklist.whiteplayer[x] == tostring(player.get_rid(ply)) then
-            utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["whitelist"],10,4)
+            if config["notify"] then
+                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["whitelist"],10,4)
+            end
         else
             for i = 1,#blacklist.blackwords do 
                 files.write_file(path.."test.txt", blacklist.blackwords[i])
@@ -94,15 +100,21 @@ function OnChatMsg(ply, text)
                                     player.crash_himiko_start(ply)
                                     player.crash_izuku_start(ply)
                                 end
-                                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kicksentblackword"],blacklist.blackwords[i]),10,4)
-                                utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kicksentblackword"],blacklist.blackwords[i]), false)
+                                if config["notify"] then
+                                    utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kicksentblackword"],blacklist.blackwords[i]),10,4)
+                                end
+                                if config["nofify_chat"] then
+                                    utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kicksentblackword"],blacklist.blackwords[i]), false)
+                                end
                                 if config["output_log"] then
                                     blacklist.outputkicklog(ply,blacklist.blackwords[i],text)
                                 end
                                 return
                             end
                         else
-                            utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["nobaleful"],10,4)
+                            if config["notify"] then
+                                utils.notify(string.format(language["kicktitle"],player.get_name(ply)),language["nobaleful"],10,4)
+                            end
                             return
                         end
                     end
@@ -125,13 +137,17 @@ function OnNetworkEvent(ply, event, buf)
     kick_player(ply)
 end
 function OnInit()
-    utils.notify(language["title"],language["loaded"],19,1)
+    if config["notify"] then
+        utils.notify(language["title"],language["loaded"],19,1)
+    end
     if config["output_log"] then
         blacklist.outputlog("加载脚本完毕")
     end
 end
 function OnDone()
-    utils.notify(language["title"],language["unloaded"],19,1)
+    if config["notify"] then
+        utils.notify(language["title"],language["unloaded"],19,1)
+    end
     if config["output_log"] then
         blacklist.outputlog("卸载脚本完毕")
     end
@@ -157,23 +173,33 @@ end
 function execute_black()
     local players = player.get_hosts_queue()
     if player.is_local(players[key_index]) then
-        utils.notify(language["title"],language["cantaddlocal"],16,2)
+        if config["notify"] then
+            utils.notify(language["title"],language["cantaddlocal"],16,2)
+        end
         return
     end
     if title_index == 2 then
         if files.load_file(path..config["file_name"]["blackplayer"]["custom"]) == "" then
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify(language["title"],language["blackadded"],16,1)
+                if config["notify"] then
+                    utils.notify(language["title"],language["blackadded"],16,1)
+                end
             else
-                utils.notify(language["title"],language["blackexists"],16,2)
+                if config["notify"] then
+                    utils.notify(language["title"],language["blackexists"],16,2)
+                end
             end
         else
             if string.find(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.append_file(path..config["file_name"]["blackplayer"]["custom"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify(language["title"],language["blackadded"],16,1)
+                if config["notify"] then
+                    utils.notify(language["title"],language["blackadded"],16,1)
+                end
             else
-                utils.notify(language["title"],language["blackexists"],16,2)
+                if config["notify"] then
+                    utils.notify(language["title"],language["blackexists"],16,2)
+                end
             end
         end
     end
@@ -182,16 +208,24 @@ function execute_black()
             
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(player.get_rid(players[key_index]))) == nil then
                 files.write_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify(language["title"],language["whiteadded"],16,1)
+                if config["notify"] then
+                    utils.notify(language["title"],language["whiteadded"],16,1)
+                end
             else
-                utils.notify(language["title"],language["whiteexists"],16,2)
+                if config["notify"] then
+                    utils.notify(language["title"],language["whiteexists"],16,2)
+                end
             end
         else
             if string.find(files.load_file(path..config["file_name"]["whiteplayer"]),tostring(tostring(player.get_rid(players[key_index])))) == nil then
                 files.append_file(path..config["file_name"]["whiteplayer"], "\n"..tostring(player.get_rid(players[key_index])))
-                utils.notify(language["title"],language["whiteadded"],16,1)
+                if config["notify"] then
+                    utils.notify(language["title"],language["whiteadded"],16,1)
+                end
             else
-                utils.notify(language["title"],language["whiteexists"],16,2)
+                if config["notify"] then
+                    utils.notify(language["title"],language["whiteexists"],16,2)
+                end
             end
         end
     end
@@ -215,6 +249,7 @@ function execute_black()
     end
 end
 function OnFrame()
+    
     config = json.decode(files.load_file(config_path))
     if not config["enable"] then return end
     if menu.is_menu_opened() then
@@ -227,6 +262,12 @@ function OnFrame()
         local y = 0
         local long_size = 0
         local text_size = draw.get_text_size(player.get_name(player.index()))
+        if key_index > #players then
+            key_index = #players
+        end
+        if key_index < 1 then
+            key_index = 1
+        end
         for i=1,#players do
             ply = players[i]
             

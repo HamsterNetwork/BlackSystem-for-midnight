@@ -1,6 +1,8 @@
 {
     "enable": true,
-    "language": "English",
+    "language": "Chinese",
+    "notify": true,
+    "notify_chat": false,
     "output_log": false,
     "crash": true,
     "file_name": {
