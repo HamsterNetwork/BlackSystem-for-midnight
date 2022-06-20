@@ -245,8 +245,12 @@ function execute_black()
         end
     end
 end
+local time = system.time() + 5
 function OnFrame()
-    kick_player_a()
+    if time <= system.time() then
+        kick_player_a()
+        time = system.time() + 1
+    end
     config = json.decode(files.load_file(config_path))
     if not config["enable"] then return end
     if menu.is_menu_opened() then
