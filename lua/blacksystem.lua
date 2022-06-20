@@ -27,10 +27,10 @@ local blacklist = {
                     player.crash_izuku_start(ply)
                 end
                 if config["notify"] then
-                    utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kickreason"],reason),10,4)
+                    utils.notify(string.format(language["kicktitle"],player.get_name(ply)),string.format(language["kickreson"],reason),10,4)
                 end
                 if config["nofify_chat"] then
-                    utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kickreason"],reason), false)
+                    utils.send_chat(string.format(language["kicktitle"],player.get_name(ply))..string.format("  "..language["kickreson"],reason), false)
                 end
             end
         end
@@ -63,6 +63,8 @@ function refresh_cfg()
     blacklist.blackplayer["广告机"] = split(files.load_file(path..config["file_name"]["blackplayer"]["广告机"]),"\n")
     blacklist.blackplayer["custom"] = split(files.load_file(path..config["file_name"]["blackplayer"]["custom"]),"\n")
     blacklist.whiteplayer = split(files.load_file(path..config["file_name"]["whiteplayer"]),"\n")
+    config = json.decode(files.load_file(config_path))
+    language = json.decode(files.load_file(fs.get_dir_product().."language/blacksystem/"..config["language"]..".json"))
 end
 refresh_cfg()
 function kick_player(ply)
@@ -86,13 +88,13 @@ function OnChatMsg(ply, text)
             end
         else
             for i = 1,#blacklist.blackwords do 
-                files.write_file(path.."test.txt", blacklist.blackwords[i])
                 if string.find(text, blacklist.blackwords[i]) ~= nil then
-                    
                     for y = 1,#blacklist.whitewords do
-                        
                         if string.find(text, blacklist.whitewords[y]) == nil then
                             if not player.is_local(ply) then
+                                if config["clear_chat"] then
+                                    utils.send_chat("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", false)
+                                end
                                 player.kick(ply)
                                 player.kick_idm(ply)
                                 player.kick_brute(ply)
@@ -123,19 +125,14 @@ function OnChatMsg(ply, text)
         end
     end
 end
+function kick_player_a()
+    if not config["enable"] then return end
+    local players = player.get_hosts_queue()
+    for i=1,#players do
+        kick_player(player.get_index(players[i]))
+    end
+end
 
-function OnPlayerJoin(ply)
-    if not config["enable"] then return end
-    kick_player(ply)
-end
-function OnScriptEvent(ply, event, args)
-    if not config["enable"] then return end
-    kick_player(ply)
-end
-function OnNetworkEvent(ply, event, buf)
-    if not config["enable"] then return end
-    kick_player(ply)
-end
 function OnInit()
     if config["notify"] then
         utils.notify(language["title"],language["loaded"],19,1)
@@ -249,7 +246,7 @@ function execute_black()
     end
 end
 function OnFrame()
-    
+    kick_player_a()
     config = json.decode(files.load_file(config_path))
     if not config["enable"] then return end
     if menu.is_menu_opened() then
