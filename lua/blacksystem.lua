@@ -295,7 +295,7 @@ function OnFrame()
                 title_text = titles[title_index].."("..title_index.."/"..#titles..")"
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(title_text)/2, menu.get_main_menu_pos().y+target_text_size.y, title_text)
                 draw.text(menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size/2-draw.get_text_size_x(title_text)/2, menu.get_main_menu_pos().y+target_text_size.y, title_text)
-                draw_rect(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*key_index, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*(key_index+1),sub_r, sub_g, sub_b, sub_a,15)
+                draw_rect(menu.get_main_menu_pos().x+menu.get_main_menu_size().x, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*key_index, menu.get_main_menu_pos().x+menu.get_main_menu_size().x+long_size+10, menu.get_main_menu_pos().y+target_text_size.y+target_text_size.y*(key_index+1),text_r, text_g, text_b, text_a,15)
                 
             end
             if menu.get_main_menu_pos().y+text_size.y*x < menu.get_main_menu_pos().y+menu.get_main_menu_size().y then
